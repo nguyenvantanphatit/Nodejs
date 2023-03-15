@@ -87,14 +87,14 @@ app.post("/login", async function (req, res) {
 });
 
 //Handling user logout
-app.get("/logout", function (req, res) {
-  req.logout(function (err) {
-    if (err) {
-      return next(err);
-    }
-    res.redirect("/");
-  });
-});
+// app.get("/logout", function (req, res) {
+//   req.logout(function (err) {
+//     if (err) {
+//       return console.log
+//     }
+//     res.redirect("/");
+//   });
+// });
 
 function isLoggedIn(req, res, next) {
   if (req.isAuthenticated()) return next();
