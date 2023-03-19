@@ -1,3 +1,4 @@
+/* eslint-disable no-undef */
 require("dotenv").config();
 const express = require("express");
 const app = express();
@@ -113,6 +114,28 @@ app.get("/", async function (req, res) {
       });
     }
   });
+});
+
+// All Books Route
+app.get("/search", async (req, res) => {
+  var curUser = null;
+  if (req.isAuthenticated()) {
+    curUser = req.user;
+  }
+  let query = Product.find();
+  if (req.query.title != null && req.query.title != "") {
+    query = query.regex("title", new RegExp(req.query.title, "i"));
+  }
+  try {
+    const products = await query.exec();
+    res.render("search", {
+      user: req.user,
+      products: products,
+      searchOptions: req.query,
+    });
+  } catch {
+    res.redirect("/");
+  }
 });
 
 app.get("/cart", function (req, res) {
@@ -498,7 +521,6 @@ app.post("/login", function (req, res) {
   });
   req.login(user, async function (err) {
     if (err) {
-      console.log(err);
       res.redirect("/login");
     } else {
       await passport.authenticate("local")(req, res, function () {
@@ -510,6 +532,7 @@ app.post("/login", function (req, res) {
 
 app.get("/logout", function (req, res) {
   if (req.isAuthenticated()) {
+    var curUser = null;
     req.logout();
     res.redirect("/");
   } else {
