@@ -13,9 +13,6 @@ const cloudinary = require("cloudinary").v2;
 const upload = require("./multer/multer");
 const stripe = require("stripe")(process.env.STRIPE_SKEY);
 
-//
-
-//
 app.set("view engine", "ejs");
 
 app.use(
@@ -78,50 +75,8 @@ const productSchema = new mongoose.Schema({
   imgurl: String,
   imgid: String,
   price: String,
-  author: {
-    type: mongoose.Schema.Types.ObjectId,
-    required: true,
-    ref: "Author",
-  },
 });
-
-productSchema.virtual("coverImagePath").get(function () {
-  if (this.coverImage != null && this.coverImageType != null) {
-    return `data:${
-      this.coverImageType
-    };charset=utf-8;base64,${this.coverImage.toString("base64")}`;
-  }
-});
-
 const Product = new mongoose.model("Product", productSchema);
-
-// author
-const authorSchema = new mongoose.Schema({
-  title: {
-    type: String,
-    required: true,
-  },
-});
-
-authorSchema.pre("remove", function (next) {
-  Book.find({ author: this.id }, (err, books) => {
-    if (err) {
-      next(err);
-    } else if (books.length > 0) {
-      next(new Error("This author has books still"));
-    } else {
-      next();
-    }
-  });
-});
-
-module.exports = mongoose.model("Author", authorSchema);
-//
-const categorySchema = new mongoose.Schema({
-  title: String,
-});
-const Category = new mongoose.model("Category", categorySchema);
-
 const orderSchema = new mongoose.Schema({
   date: String,
   userid: {
@@ -231,13 +186,13 @@ app.post("/cart/remove/:pid", async function (req, res) {
 
 app.get("/compose", async function (req, res) {
   if (req.isAuthenticated() && req.user.admin === true) {
-    await Category.find().exec(function (err, foundCategories) {
+    await Product.find().exec(function (err, foundCategories) {
       if (err) {
         console.log(err);
         res.redirect("/compose");
       } else {
         res.render("compose", {
-          categories: foundCategories,
+          products: foundCategories,
         });
       }
     });
@@ -383,7 +338,7 @@ app.post("/payment", async (req, res) => {
     .create({
       amount: req.session.cart.totalPrice * 100,
       source: req.body.stripeToken,
-      currency: "inr",
+      currency: "usd",
       description: "book empire purchase",
     })
     .then(async () => {
@@ -526,30 +481,6 @@ app.get("/profile/:pname", async function (req, res) {
   );
 });
 
-app.get("/categories/:cname", async function (req, res) {
-  var curUser = null;
-  if (req.isAuthenticated()) {
-    curUser = req.user;
-  }
-  const categoryName = req.params.cname;
-  await Product.find(
-    {
-      category: categoryName,
-    },
-    function (err, foundProducts) {
-      if (err) {
-        console.log(err);
-        res.redirect("/");
-      } else {
-        res.render("home", {
-          products: foundProducts,
-          user: curUser,
-        });
-      }
-    }
-  );
-});
-
 app.get("/login", function (req, res) {
   if (req.isAuthenticated()) {
     res.redirect("/");
@@ -617,20 +548,21 @@ app.post("/register", function (req, res) {
   );
 });
 
-// phaan trang
-
-// phaan trange is
-
-app.get("/", async (req, res, next) => {
+app.get("/page", async (req, res, next) => {
+  var curUser = null;
+  if (req.isAuthenticated()) {
+    curUser = req.user;
+  }
   let perPage = 2;
   let page = req.params.page || 1;
   Product.find()
     .skip(perPage * page - perPage)
     .limit(perPage)
-    .exec((err, books) => {
+    .exec((err, products) => {
       Product.countDocuments((err, count) => {
         if (err) return next(err);
-        res.render("home", {
+        res.render("page", {
+          user: curUser,
           products: products,
           current: page,
           pages: Math.ceil(count / perPage),
@@ -640,7 +572,11 @@ app.get("/", async (req, res, next) => {
 });
 
 // pagination
-app.get("/:page", async (req, res, next) => {
+app.get("/page/:page", async (req, res, next) => {
+  var curUser = null;
+  if (req.isAuthenticated()) {
+    curUser = req.user;
+  }
   let perPage = 2;
   let page = req.params.page || 1;
 
@@ -650,7 +586,8 @@ app.get("/:page", async (req, res, next) => {
     .exec((err, products) => {
       Product.countDocuments((err, count) => {
         if (err) return next(err);
-        res.render("home", {
+        res.render("page", {
+          user: curUser,
           products: products,
           current: page,
           pages: Math.ceil(count / perPage),
@@ -658,7 +595,6 @@ app.get("/:page", async (req, res, next) => {
       });
     });
 });
-//
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, function () {
