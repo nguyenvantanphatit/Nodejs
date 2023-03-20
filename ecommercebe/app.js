@@ -13,7 +13,12 @@ const passportLocalMongoose = require("passport-local-mongoose");
 const cloudinary = require("cloudinary").v2;
 const upload = require("./multer/multer");
 const stripe = require("stripe")(process.env.STRIPE_SKEY);
+const initRoutes = require("./routes/web");
+// Cho phép lý dữ liệu từ form method POST
+app.use(express.urlencoded({ extended: true }));
 
+// Khởi tạo các routes cho ứng dụng
+initRoutes(app);
 app.set("view engine", "ejs");
 
 app.use(
@@ -47,7 +52,7 @@ app.use(
     saveUninitialized: false,
     cookie: {
       maxAge: 1000 * 60 * 60 * 24,
-    }, //24hrs
+    },
   })
 );
 app.use(flash());
@@ -116,7 +121,6 @@ app.get("/", async function (req, res) {
   });
 });
 
-// All Books Route
 app.get("/search", async (req, res) => {
   var curUser = null;
   if (req.isAuthenticated()) {
@@ -177,12 +181,12 @@ app.post("/update-cart", function (req, res) {
 app.post("/update-cart-dec", function (req, res) {
   let cart = req.session.cart;
   if (cart.items[req.body._id].qty <= 1) {
-    const bookId = req.body._id;
-    cart.totalQty = cart.totalQty - cart.items[bookId].qty;
+    const productId = req.body._id;
+    cart.totalQty = cart.totalQty - cart.items[productId].qty;
     cart.totalPrice =
       cart.totalPrice -
-      parseInt(cart.items[bookId].item.price) * cart.items[bookId].qty;
-    delete cart.items[bookId];
+      parseInt(cart.items[productId].item.price) * cart.items[productId].qty;
+    delete cart.items[productId];
     return res.json({
       totalQty: req.session.cart.totalQty,
     });
@@ -197,25 +201,25 @@ app.post("/update-cart-dec", function (req, res) {
 });
 
 app.post("/cart/remove/:pid", async function (req, res) {
-  const bookId = req.params.pid;
+  const productId = req.params.pid;
   let cart = req.session.cart;
-  cart.totalQty = cart.totalQty - cart.items[bookId].qty;
+  cart.totalQty = cart.totalQty - cart.items[productId].qty;
   cart.totalPrice =
     cart.totalPrice -
-    parseInt(cart.items[bookId].item.price) * cart.items[bookId].qty;
-  await delete cart.items[bookId];
+    parseInt(cart.items[productId].item.price) * cart.items[productId].qty;
+  await delete cart.items[productId];
   res.redirect("/cart");
 });
 
 app.get("/compose", async function (req, res) {
   if (req.isAuthenticated() && req.user.admin === true) {
-    await Product.find().exec(function (err, foundCategories) {
+    await Product.find().exec(function (err, foundProducts) {
       if (err) {
         console.log(err);
         res.redirect("/compose");
       } else {
         res.render("compose", {
-          products: foundCategories,
+          products: foundProducts,
         });
       }
     });
@@ -252,50 +256,6 @@ app.post("/compose", upload.single("image"), async function (req, res) {
     console.log(err);
     res.redirect("/compose");
   }
-});
-
-app.get("/terms", function (req, res) {
-  var curUser = null;
-  if (req.isAuthenticated()) {
-    curUser = req.user;
-  }
-  res.render("info", {
-    title: "Terms",
-    user: curUser,
-  });
-});
-
-app.get("/privacy", function (req, res) {
-  var curUser = null;
-  if (req.isAuthenticated()) {
-    curUser = req.user;
-  }
-  res.render("info", {
-    title: "Privacy Policy",
-    user: curUser,
-  });
-});
-
-app.get("/refund", function (req, res) {
-  var curUser = null;
-  if (req.isAuthenticated()) {
-    curUser = req.user;
-  }
-  res.render("info", {
-    title: "Refund Policy",
-    user: curUser,
-  });
-});
-
-app.get("/disclaimer", function (req, res) {
-  var curUser = null;
-  if (req.isAuthenticated()) {
-    curUser = req.user;
-  }
-  res.render("info", {
-    title: "Disclaimer",
-    user: curUser,
-  });
 });
 
 app.get("/orders", function (req, res) {
@@ -341,7 +301,6 @@ app.post("/orders", async function (req, res) {
       });
     } else {
       const order = new Order({
-        date: new Date(),
         userid: req.user._id,
         items: req.session.cart.items,
         phone: req.body.phone,
@@ -362,11 +321,10 @@ app.post("/payment", async (req, res) => {
       amount: req.session.cart.totalPrice * 100,
       source: req.body.stripeToken,
       currency: "usd",
-      description: "book empire purchase",
+      description: "Sneaker purchase",
     })
     .then(async () => {
       const order = new Order({
-        date: new Date(),
         userid: req.user._id,
         items: req.session.cart.items,
         phone: req.body.phone,
@@ -473,30 +431,6 @@ app.get("/product/:pid", async function (req, res) {
       } else {
         res.render("product", {
           product: foundProduct,
-          user: curUser,
-        });
-      }
-    }
-  );
-});
-
-app.get("/profile/:pname", async function (req, res) {
-  var curUser = null;
-  if (req.isAuthenticated()) {
-    curUser = req.user;
-  }
-  const authorName = req.params.pname;
-  await Product.find(
-    {
-      author: authorName,
-    },
-    function (err, foundProducts) {
-      if (err) {
-        console.log(err);
-        res.redirect("/");
-      } else {
-        res.render("home", {
-          products: foundProducts,
           user: curUser,
         });
       }
