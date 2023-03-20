@@ -510,7 +510,7 @@ app.get("/page", async (req, res, next) => {
   if (req.isAuthenticated()) {
     curUser = req.user;
   }
-  let perPage = 2;
+  let perPage = 4;
   let page = req.params.page || 1;
   Product.find()
     .skip(perPage * page - perPage)
@@ -534,7 +534,7 @@ app.get("/page/:page", async (req, res, next) => {
   if (req.isAuthenticated()) {
     curUser = req.user;
   }
-  let perPage = 2;
+  let perPage = 4;
   let page = req.params.page || 1;
 
   Product.find()

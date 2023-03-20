@@ -77,10 +77,10 @@
                   <a href="/product/<%= session.cart.items[key].item._id %>">
                     <h1><%= session.cart.items[key].item.title %></h1>
                   </a>
-                  <p>Quantity: <button type="button" name="button" data-product="<%= JSON.stringify(session.cart.items[key].item) %>" class="qty-dec">-</button> <span class="elementQuantity"><%= session.cart.items[key].qty %></span> <button type="button" name="button" data-book="<%= JSON.stringify(session.cart.items[key].item) %>" class="qty-inc">+</button></p>
+                  <p>Quantity: <button type="button" name="button" data-product="<%= JSON.stringify(session.cart.items[key].item) %>" class="qty-dec">-</button> <span class="elementQuantity"><%= session.cart.items[key].qty %></span> <button type="button" name="button" data-product="<%= JSON.stringify(session.cart.items[key].item) %>" class="qty-inc">+</button></p>
                 </div>
                 <div class="col-xs-3 cart-price">
-                  <h3><%= session.cart.items[key].item.price %></h3>
+                  <h3>$<%= session.cart.items[key].item.price %></h3>
                   <form action="/cart/remove/<%= key %>" method="post">
                     <button type="submit" class="btn-danger" name="button">Remove</button>
                   </form>
@@ -93,14 +93,14 @@
       </div>
       <div class="col-md-4 cart-right price-details">
         <div class="empty container">
-          <h1>Price Details</h1>
+          <h1>Price Cart</h1>
           <hr>
           <div class="row">
             <div class="col-xs-6 pdl">
-              <h2>Subtotal</h2>
+              <h2>Price</h2>
             </div>
             <div class="col-xs-6 pdr">
-              <h2> <%= session.cart.totalPrice %></h2>
+              <h2>$ <%= session.cart.totalPrice %></h2>
             </div>
           </div>
         
@@ -110,7 +110,7 @@
               <h1>Total Price</h1>
             </div>
             <div class="col-xs-6 pdr">
-              <h1><%= session.cart.totalPrice %></h1>
+              <h1>$<%= session.cart.totalPrice %></h1>
             </div>
           </div>
         </div>
@@ -138,7 +138,8 @@
       <h1>Cart</h1>
       <hr>
       <div class="ee-img">
-        <img src="images/empty.png" alt="">
+        <p>Cart Empty</p>
+        <!-- <img src="images/empty.png" alt=""> -->
       </div>
       <hr>
       <a href="/"><button type="button" name="button" class="btn-primary">Back to Store</button></a>
@@ -153,7 +154,7 @@
 
 
       <!-- Footer -->
-<footer class="text-center text-lg-start bg-light text-muted">
+<footer class="text-center text-lg-start bg-light text-muted" style="margin-top: 100px;">
   <!-- Section: Social media -->
   
   <!-- Section: Social media -->
