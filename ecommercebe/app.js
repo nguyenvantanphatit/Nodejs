@@ -14,6 +14,7 @@ const cloudinary = require("cloudinary").v2;
 const upload = require("./multer/multer");
 const stripe = require("stripe")(process.env.STRIPE_SKEY);
 const initRoutes = require("./routes/web");
+
 // Cho phép lý dữ liệu từ form method POST
 app.use(express.urlencoded({ extended: true }));
 
