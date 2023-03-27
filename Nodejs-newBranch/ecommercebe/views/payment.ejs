@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+<title>Stripe Payment Gateway</title>
+<body>
+    <h3>Welcome to Payment Gateway</h3>
+    <form action="/payment" method="POST">
+      <input type="hidden" name="phone" value="<%= phone %>">
+      <input type="hidden" name="address" value="<%= address %>">
+      <input type="hidden" name="price" value="<%= price %>">
+    <script
+        src="//checkout.stripe.com/v2/checkout.js"
+        class="stripe-button"
+        data-key="<%= key %>"
+        data-amount=<%= price %>
+        data-currency="inr"
+        data-name="Payment with card"
+        data-description="Book Empire purchase"
+        data-locale="auto" >
+        </script>
+    </form>
+</body>
+</html>
