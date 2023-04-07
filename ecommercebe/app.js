@@ -15,6 +15,17 @@ const upload = require("./multer/multer");
 const stripe = require("stripe")(process.env.STRIPE_SKEY);
 const initRoutes = require("./routes/web");
 
+var helmet = require("helmet");
+var xss = require("xss-clean");
+var rateLimit = require("express-rate-limit");
+var cors = require("cors");
+const limiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 2, // Limit each IP to 100 requests per `window` (here, per 15 minutes)
+  standardHeaders: true, // Return rate limit info in the `RateLimit-*` headers
+  legacyHeaders: false, // Disable the `X-RateLimit-*` headers
+});
+
 // Cho phép lý dữ liệu từ form method POST
 app.use(express.urlencoded({ extended: true }));
 
@@ -59,7 +70,9 @@ app.use(
 app.use(flash());
 app.use(passport.initialize());
 app.use(passport.session());
-
+app.use(helmet());
+app.use(xss());
+app.use(cors());
 app.use((req, res, next) => {
   res.locals.session = req.session;
   next();
@@ -554,7 +567,7 @@ app.get("/page/:page", async (req, res, next) => {
     });
 });
 
-const PORT = process.env.PORT || 3999;
+const PORT = process.env.PORT || 4000;
 app.listen(PORT, function () {
   console.log("Server is running on port " + PORT);
 });
