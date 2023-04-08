@@ -5,7 +5,7 @@
   "main": "app.js",
   "scripts": {
     "start": "node app.js",
-    "test": "cross-env NODE_ENV=test jest --testTimeout=5000"
+    "test": "jest --detectOpenHandles"
   },
   "author": "",
   "license": "ISC",
