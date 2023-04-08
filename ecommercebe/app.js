@@ -15,7 +15,6 @@ const upload = require("./multer/multer");
 const stripe = require("stripe")(process.env.STRIPE_SKEY);
 const initRoutes = require("./routes/web");
 
-var helmet = require("helmet");
 var xss = require("xss-clean");
 var rateLimit = require("express-rate-limit");
 var cors = require("cors");
@@ -70,7 +69,6 @@ app.use(
 app.use(flash());
 app.use(passport.initialize());
 app.use(passport.session());
-app.use(helmet());
 app.use(xss());
 app.use(cors());
 app.use((req, res, next) => {
@@ -567,7 +565,7 @@ app.get("/page/:page", async (req, res, next) => {
     });
 });
 
-const PORT = process.env.PORT || 4000;
+const PORT = process.env.PORT || 3000;
 app.listen(PORT, function () {
   console.log("Server is running on port " + PORT);
 });
