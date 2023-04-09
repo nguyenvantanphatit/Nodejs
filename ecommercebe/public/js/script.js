@@ -1,5 +1,3 @@
-// import axios from 'axios';
-// import Noty from 'noty'
 let addToCart = document.querySelectorAll(".add-to-cart");
 let cartCounter = document.querySelector("#cartCounter");
 let qtyDec = document.querySelectorAll(".qty-dec");
