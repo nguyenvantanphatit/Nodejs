@@ -17,7 +17,7 @@ describe("Search Products", () => {
     await connection.close();
   });
 
-  test("should return products matching the search query", async () => {
+  test("sản phẩm khớp với truy vấn tìm kiếm", async () => {
     const searchQuery = "Jordan 2";
     const products = await db
       .collection("products")
