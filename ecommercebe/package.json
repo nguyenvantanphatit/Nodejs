@@ -5,8 +5,9 @@
   "main": "app.js",
   "scripts": {
     "start": "node app.js",
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "echo 123"
+    "build": "echo 123",
+    "test": "jest",
+    "test-w": "jest --watchAll"
   },
   "author": "",
   "license": "ISC",
@@ -39,6 +40,10 @@
     "passport-local-mongoose": "^6.1.0",
     "rimraf": "^3.0.2",
     "stripe": "^8.137.0",
-    "xss-clean": "^0.1.1"
+    "xss-clean": "^0.1.1",
+    "supertest": "^4.0.2"
+  },
+  "devDependencies": {
+    "jest": "^26.4.2"
   }
 }
