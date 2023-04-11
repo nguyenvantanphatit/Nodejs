@@ -24,7 +24,7 @@
         <div class="col-12">
           <nav class="navbar navbar-expand-md navbar-light">
 
-            <a class="navbar-brand grow" href="/">Sneaker</a>
+            <a class="navbar-brand grow" href="#">Sneaker</a>
 
             <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
               <span class="navbar-toggler-icon"></span>
@@ -71,7 +71,6 @@
     </div>
   </div>
   <br><br><br>
-
   <%for(var i=0;i<products.length;i=i+4){%>
   <div class="row">
     <%for(var j=0;(i+j)<products.length && j<4;j++){%>
@@ -84,7 +83,7 @@
         <div class="product-details">
           <h4><a href="/product/<%=products[i+j]._id%>"><%=products[i+j].title%></a></h4>
           <div class="product-bottom-details">
-            <div class="product-price"><small><%=products[i+j].price%></small><%=products[i+j].price%></div>
+            <div class="product-price"><small>$<%=products[i+j].price%></small>$<%=products[i+j].price%></div>
             <div class="product-links">
               <button type="button" class="btn-primary add-to-cart" data-product="<%= JSON.stringify(products[i+j]) %>" name="button">Add to cart</button>
             </div>
@@ -122,7 +121,7 @@
             Nguyen Van Tan Phat
           </p>
           <p>
-            Nguyen Van Tan Phat
+            Pham Hiep Thanh
           </p>
         </div>
         <!-- Grid column -->
